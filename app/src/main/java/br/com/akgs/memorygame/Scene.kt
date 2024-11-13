@@ -2,7 +2,6 @@ package br.com.akgs.memorygame
 
 import android.graphics.Canvas
 import android.view.MotionEvent
-import android.view.View
 
 interface Scene {
 

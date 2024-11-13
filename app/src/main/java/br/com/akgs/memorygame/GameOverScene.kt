@@ -9,26 +9,26 @@ import android.util.Log
 import android.view.MotionEvent
 import kotlin.random.Random
 
-class StartScene(private val screen: MainActivity.Screen): Scene {
+class GameOverScene(private val screen: MainActivity.Screen) : Scene {
 
     private val paint = Paint()
     private var controlTime = 0f
-    private var introBitmap: Bitmap? = null
-    private var tituloBitmap: Bitmap? = null
+    private var eeveeSad: Bitmap? = null
+    private var gameOver: Bitmap? = null
     private var music: Music? = null
 
 
     init {
-        paint.textSize = 90f
+        paint.textSize = 72f
         paint.textAlign = Paint.Align.CENTER
         paint.typeface = Fonts.pokemonFontSolid
         paint.color = Color.YELLOW
 
-        introBitmap = loadBitmap("intro-name.png")
-        tituloBitmap = loadBitmap("titulo-logo.png")
+        eeveeSad = loadBitmap("sad-eevee.png")
+        gameOver = loadBitmap("game-over.png")
 
         try {
-            val descriptor = screen.context.assets.openFd("music-intro.mp3")
+            val descriptor = screen.context.assets.openFd("music-gameover.mp3")
             music = Music(descriptor)
         } catch (e: Exception) {
             Log.d("App", e.message ?: "Algo ocorreu de errado ao carregar o áudio")
@@ -36,7 +36,6 @@ class StartScene(private val screen: MainActivity.Screen): Scene {
         music?.setLooping(false)
         music?.setVolume(5f)
         music?.play()
-
     }
 
     override fun update(et: Float) {
@@ -48,15 +47,16 @@ class StartScene(private val screen: MainActivity.Screen): Scene {
     }
 
     override fun render(canvas: Canvas) {
-        val titulo = tituloBitmap ?: return
-        canvas.drawBitmap(titulo, (screen.width - titulo.width)/2f, 200f, paint)
 
-        val intro = introBitmap ?: return
-        canvas.drawBitmap(intro, (screen.width - intro.width)/2f, screen.height/2f, null)
+        val sad = eeveeSad ?: return
+        canvas.drawBitmap(sad, (screen.width - sad.width) / 2f, 300f, paint)
 
-        val text = "Toque para jogar"
-        canvas.drawText(text, screen.width/2f, screen.height - 650f, paint)
+        val message = gameOver ?: return
+        canvas.drawBitmap(message, (screen.width - message.width)/2f, screen.height/3f + 300f, null)
 
+
+        val textRepeat = "Tentar Novamente"
+        canvas.drawText(textRepeat, screen.width / 2f, screen.height / 2 + 250f, paint)
 
     }
 
@@ -70,6 +70,19 @@ class StartScene(private val screen: MainActivity.Screen): Scene {
         }
     }
 
+    private fun loadBitmap(file: String): Bitmap? {
+        try {
+            val inputStream = screen.context.assets.open(file)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream.close()
+            return bitmap
+        } catch (e: Exception) {
+            Log.d("App", e.message ?: "Algo ocorreu de errado ao carrgar a imagem")
+        }
+
+        return null
+    }
+
     override fun onResume() {
 
     }
@@ -77,20 +90,7 @@ class StartScene(private val screen: MainActivity.Screen): Scene {
     override fun onPause() {
         music?.pause()
         music?.dispose()
-
     }
 
-    private fun loadBitmap(file: String): Bitmap? {
-        try {
-            val inputStream = screen.context.assets.open(file)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream.close()
-            return bitmap
-        }
-        catch (e: Exception) {
-            Log.d("App", e.message ?: "Algo ocorreu de errado ao carrgar a imagem")
-        }
 
-        return null
-    }
 }

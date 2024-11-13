@@ -4,27 +4,23 @@ import android.graphics.Canvas
 import android.util.Log
 import android.view.MotionEvent
 
-class GameScene(screen: MainActivity.Screen) : Scene {
+class GameScene(private val screen: MainActivity.Screen) : Scene {
 
-    private val cards: GameObject = Cards(screen.context, 400f, 300f)
-
-    //    private val title: GameObject = Title(screen.context, 250f, 200f)
-    private val title: GameObject = Title(screen.width / 2f, 250f)
+    private val cards: GameObject = Cards(screen.context,screen, 400f, screen.height - 400f)
     private var goArray: MutableList<GameObject> = mutableListOf()
     private var music: Music? = null
 
     init {
         try {
-            val descriptor = screen.context.assets.openFd("music.mp3")
+            val descriptor = screen.context.assets.openFd("music-game.mp3")
             music = Music(descriptor)
         } catch (e: Exception) {
             Log.d("App", e.message ?: "Algo ocorreu de errado ao carregar o áudio")
         }
-        music?.setLooping(true)
+        music?.setLooping(false)
         music?.setVolume(5f)
         music?.play()
         goArray.add(cards)
-        goArray.add(title)
     }
 
     override fun update(et: Float) {
